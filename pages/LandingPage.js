@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text style={styles.texttest}>Homepage!</Text>
+      <Text style={styles.texttest}>Landing</Text>
       <StatusBar style="auto" />
     </View>
   );
