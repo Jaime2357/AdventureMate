@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LandingScreen from './pages/LandingPage';
+import TripPage from './pages/TripPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export default function App() {
       screenOptions={styles.header} 
       >
         <Stack.Screen name = "Landing" component ={LandingScreen} options = {{title: 'Welcome!'}}  />
+        <Stack.Screen name = "TripPage" component ={TripPage} options = {{title: 'Trip Page'}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
