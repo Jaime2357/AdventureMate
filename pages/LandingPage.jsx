@@ -3,96 +3,65 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SectionList, TouchableOpacity } from 'react-native';
 import { AlphabetList } from "react-native-section-alphabet-list";
 import { useNavigation } from '@react-navigation/native';
-import db from '../database/dbAccess';
+import { loadDB, getDestinations } from '../database/dbAccess';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { isSearchBarAvailableForCurrentPlatform } from 'react-native-screens';
+
+//const Stack = createNativeStackNavigator();
 
 export default function LandingPage() {
 
   const [trips, setTrips] = useState([]);
+  const [tripsLoaded, loadTrips] = useState(false);
   const navigation = useNavigation();
 
+  const db = useSQLiteContext();
+
   useEffect(() => {
-    const fetchTripsFromDatabase = () => {
-      db.transaction((tx) => {
-        tx.executeSql(
-          'SELECT destinations FROM trips;',
-          //`SELECT name FROM sqlite_master WHERE type='table';`, 
-          [],
-          (_, resultSet) => {
-            const { rows } = resultSet;
-            const fetchedTrips = [];
-            console.log("Results: ", resultSet);
-            for (let i = 0; i < rows.length; i++) {
-              fetchedTrips.push(rows.item(i).destination);
-            }
-            setTrips(fetchedTrips);
-          },
-          (_, error) => {
-            console.error('Error querying data:', error);
-          }
-        );
-      });
-    };
-
-    fetchTripsFromDatabase();
-  }, []);
-
-  console.log(trips);
-
-  // const trips = [
-  //   { value: "Alcapulco" },
-  //   { value: "Japan" },
-  //   { value: "Abu Dahbi" },
-  //   { value: "United States" },
-  //   { value: "Canada" },
-  //   { value: "Mexico" },
-  //   { value: "Brazil" },
-  //   { value: "Argentina" },
-  //   { value: "United Kingdom" },
-  //   { value: "France" },
-  //   { value: "Germany" },
-  //   { value: "Italy" },
-  //   { value: "Spain" },
-  //   { value: "Russia" },
-  //   { value: "China" },
-  //   { value: "India" },
-  //   { value: "Japan" },
-  //   { value: "South Korea" },
-  //   { value: "Australia" },
-  //   { value: "New Zealand" },
-  //   { value: "South Africa" },
-  //   { value: "Nigeria" },
-  //   { value: "Egypt" }
-  // ]
+    console.log("DB: ", db);
+    db.withTransactionAsync(async () => {
+      var tripResult = await getDestinations(db);
+      const formattedTrips = tripResult.map(item => ({ value: item.tripName }));
+      setTrips(formattedTrips);
+      loadTrips(true);
+    })
+  }, [db]);
 
   const handleClick = (item) => {
     console.log("Item: ", item);
     navigation.navigate('TripPage', { currentTrip: item });
   }
 
-  return (
-    <AlphabetList
-      data={trips}
-      renderCustomItem={(item) => (
-        <TouchableOpacity onPress={() => handleClick(item.value)} >
-          <Text>
-            {item.value}
-          </Text>
-        </TouchableOpacity>
-      )}
-    //style = {styles.alphaList}
-    // indexLetterStyle={{
-    //   color: 'blue',
-    //   fontSize: 50,
-    //   backgroundColor: '#f5f5f5', // Light gray background
-    //   padding: 5, // Add padding for better spacing
-    // }}
-    // renderCustomItem={(item) => (
-    //   <View style={styles.listItemContainer}>
-    //     <Text style={styles.listItemLabel}>{item.value}</Text>
-    //   </View>
-    // )}
-    />
-  );
+  if(!tripsLoaded){
+  }
+  else{
+    console.log(trips);
+    return (
+      <AlphabetList
+        data={trips}
+        renderCustomItem={(item) => (
+          <TouchableOpacity onPress={() => handleClick(item.value)} >
+            <Text>
+              {item.value}
+            </Text>
+          </TouchableOpacity>
+        )}
+      //style = {styles.alphaList}
+      // indexLetterStyle={{
+      //   color: 'blue',
+      //   fontSize: 50,
+      //   backgroundColor: '#f5f5f5', // Light gray background
+      //   padding: 5, // Add padding for better spacing
+      // }}
+      // renderCustomItem={(item) => (
+      //   <View style={styles.listItemContainer}>
+      //     <Text style={styles.listItemLabel}>{item.value}</Text>
+      //   </View>
+      // )}
+      />
+    );
+  }
 }
 
 const styles = StyleSheet.create({

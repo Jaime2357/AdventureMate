@@ -1,58 +1,89 @@
-import { useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-
-const tripDetails = {
-    location: "Japan",
-    startDate: new Date("2024-03-27 11:00:00"),
-    endDate: new Date("2024-08-18 19:00:00"),
-    lodgingType: "Dorm",
-    lodgingName: "SETTLE International Dormitory",
-    address: "〒819-1111 福岡県糸島市泊900-3 セトルインターナショナル  424"
-}
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { getItinerary } from '../database/dbAccess';
 
 export default function TripPage() {
 
     const navigation = useNavigation();
     const route = useRoute(); // Retrieve the route object
+    const [tripData, setTripData] = useState();
+    const [tripLoaded, loadTrip] = useState(false);
+
+    const db = useSQLiteContext();
     const { currentTrip } = route.params;
 
     useEffect(() => {
         navigation.setOptions({ title: currentTrip });
-    }, [navigation, route]);
+        db.withTransactionAsync(async () => {
+            result = await getItinerary(db, currentTrip);
+            setTripData(result)
+            loadTrip(true);
+            //const for = tripResult.map(item => ({ value: item.destination }));
+        })
+    }, [navigation, route, db]);
 
-    // const editButton = (item) => {
-    //     navigation.navigate('EditTrip', {currentTrip: item});
-    // }
+    const editButton = (item) => {
+        navigation.navigate('EditTripPage', { currentTrip: item });
+    }
+
+    if (!tripLoaded) {
+        return < Text> Loading... </Text>
+    }
+    else{
+        console.log("Itinerary Loaded:", tripData)
+    }
 
     return (
         <View>
-            <Text style={styles.label}> 
-                Destination: 
-                <Text style={styles.value}> {tripDetails.location} </Text>
-            </Text>
-            <Text style={styles.label}> 
-                Duration:
-                <Text style={styles.value}> {tripDetails.startDate.toString()} - {tripDetails.endDate.toString()} </Text>
-            </Text>
-            <Text style={styles.label}> 
-                {tripDetails.lodgingType}: 
-                <Text style={styles.value}> {tripDetails.lodgingName} </Text>
+            <Text style={styles.label}>
+                Destination:
+                {tripData.destination === null ? (
+                    <Text style={styles.value}> N/A </Text>)
+                    : (
+                        <Text style={styles.value}> {tripData.destination} </Text>
+                    )}
             </Text>
             <Text style={styles.label}>
-                Address: 
-                <Text style={styles.value}> {tripDetails.address} </Text>
+                Duration:
+                {tripData.startDate === null || tripData.endDate === null ? (
+                    <Text style={styles.value}> N/A </Text>)
+                    : (
+                        <Text style={styles.value}> {new Date(tripData.startDate).toString()} - {new Date(tripData.endDate).toString()} </Text>
+                    )}
             </Text>
+            <Text style={styles.label}>
+                {tripData.lodgingType}:
+                {tripData.lodgingName === null ? (
+                    <Text style={styles.value}> N/A </Text>)
+                    : (
+                        <Text style={styles.value}> {tripData.lodgingName} </Text>
+                    )}
+            </Text>
+            <Text style={styles.label}>
+                Address:
+                {tripData.address === null ? (
+                    <Text style={styles.value}> N/A </Text>)
+                    : (
+                        <Text style={styles.value}> {tripData.address} </Text>
+                    )}
+            </Text>
+
+            <TouchableOpacity onPress={() => editButton(currentTrip)} >
+                <Text>Edit Trip Details</Text>
+            </TouchableOpacity>
+
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     label: {
-      fontWeight: 'bold',
-      marginBottom: 5,
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
     value: {
-      fontWeight: 'normal',
+        fontWeight: 'normal',
     },
-  });
+});
