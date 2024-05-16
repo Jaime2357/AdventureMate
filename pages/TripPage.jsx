@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, BackHandler } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { getItinerary } from '../database/dbAccess';
@@ -13,6 +13,14 @@ export default function TripPage() {
 
     const db = useSQLiteContext();
     const { currentTrip } = route.params;
+
+    // useEffect(()=>{
+    //     BackHandler.addEventListener("hardwareBackPress",()=>{
+    //     navigation.navigate("LandingPage", {currentTrip: currentTrip});
+    //     //You can add any other statements also 
+    //     return true;
+    //     })
+    //    },[])
 
     useEffect(() => {
         navigation.setOptions({ title: currentTrip });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SectionList, TouchableOpacity } from 'react-native';
 import { AlphabetList } from "react-native-section-alphabet-list";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { loadDB, getDestinations } from '../database/dbAccess';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ export default function LandingPage() {
   const [trips, setTrips] = useState([]);
   const [tripsLoaded, loadTrips] = useState(false);
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const db = useSQLiteContext();
 
@@ -26,7 +27,7 @@ export default function LandingPage() {
       setTrips(formattedTrips)
       loadTrips(true);
     })
-  }, [db]);
+  }, [isFocused]);
 
   const handleClick = (item) => {
     console.log("Item: ", item);

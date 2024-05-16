@@ -29,7 +29,7 @@ export default function EditTripPage() {
     const [show, setShow] = useState(false);
 
     useEffect(() => {
-        navigation.setOptions({ title: `Edit Details: ${currentTrip}` })
+        navigation.setOptions({ title: `Edit Details: ${currentTrip.currentTrip}` })
     })
 
     const onChange = (event, selectedDate) => {
