@@ -42,4 +42,24 @@ export async function editTrip(db, field, data, currentTrip) {
     console.error('Error updating trip:', error);
   }
 }
+export async function addTrip(db, name, destination, start, end, lodgingType, lodgingName, address) {
+  console.log(
+    "Processing: ", 
+    name, ",", 
+    destination, ",", 
+    start, ",", 
+    end, ",", 
+    lodgingType, ",", 
+    lodgingName, ",", 
+    address);
+    
+  try {
+    await db.runAsync(
+      `INSERT INTO trips (tripName, destination, startDate, endDate, lodgingType, lodgingName, address) 
+      VALUES (?, ?, ?, ?, ?, ?, ?);`, 
+      [name, destination, start, end, lodgingType, lodgingName, address]);
+  } catch (error) {
+    console.error('Error adding trip:', error);
+  }
+}
 

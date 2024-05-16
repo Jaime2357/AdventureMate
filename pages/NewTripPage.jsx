@@ -1,34 +1,28 @@
 import { React, useState, useContext, useEffect } from "react";
 import { useSQLiteContext } from "expo-sqlite/next";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { editTrip } from "../database/dbAccess";
+import { addTrip } from "../database/dbAccess";
 import { StyleSheet, Button, View, Text, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 
-export default function EditTripPage() {
+export default function NewTripPage() {
 
-    const route = useRoute();
     const navigation = useNavigation();
 
     const db = useSQLiteContext();
-    const currentTrip = route.params;
 
-    const [tripName, setTripName] = useState(null);
-    const [destination, setDestination] = useState(null);
+    const [tripName, setTripName] = useState("Unnamed Trip");
+    const [destination, setDestination] = useState("N/A");
     const [startDate, setStartDate] = useState(new Date());
     const [showStartPicker, setShowStartPicker] = useState(false);
     const [startChange, setStartChange] = useState(false);
     const [endDate, setEndDate] = useState(new Date());
     const [showEndPicker, setShowEndPicker] = useState(false);
     const [endChange, setEndChange] = useState(false);
-    const [lodgingType, setLodgingType] = useState(null);
-    const [lodgingName, setLodgingName] = useState(null);
-    const [address, setAddress] = useState(null);
-
-    useEffect(() => {
-        navigation.setOptions({ title: `Edit Details: ${currentTrip.currentTrip}` })
-    })
+    const [lodgingType, setLodgingType] = useState("Accomodation");
+    const [lodgingName, setLodgingName] = useState("None");
+    const [address, setAddress] = useState("None");
 
     const handleStartConfirm = (date) => {
         setStartDate(date);
@@ -58,49 +52,18 @@ export default function EditTripPage() {
 
     }
 
-    async function updateDB() {
+    async function addToDB() {
+        // For now we'll put in dummy values, add checks later 
+        // DO NOT DO MORE THAN ONE UNNAMED TRIP, DB REQUIRES UNIQUE NAMES
 
-        var targetTrip = currentTrip.currentTrip;
+        // Add Checkbox for DateSet, for now defaults to current time]
+        // Add Checkbox for Accomodations too
 
-        if (tripName != null) {
-            console.log(1);
-            targetTrip = tripName;
-            await editTrip(db, "tripName", tripName, currentTrip.currentTrip);
-        }
-
-        console.log("Original: ", currentTrip.currentTrip);
-        console.log("Trip to Update: ", targetTrip);
-        console.log("Start: ", startChange);
-        console.log("End: ", endChange);
-
-
-        if (destination != null) {
-            console.log(2);
-            await editTrip(db, "destination", destination, targetTrip);
-        }
-        if (startChange) {
-            console.log(3);
-            await editTrip(db, "startDate", dateFormat(startDate), targetTrip);
-        }
-        if (endChange) {
-            console.log(4);
-            await editTrip(db, "endDate", dateFormat(endDate), targetTrip);
-        }
-        if (lodgingType != null) {
-            console.log(5);
-            await editTrip(db, "lodgingType", lodgingType, targetTrip);
-        }
-        if (lodgingName != null) {
-            console.log(6);
-            await editTrip(db, "lodgingName", lodgingName, targetTrip);
-        }
-        if (address != null) {
-            console.log(7);
-            await editTrip(db, "address", address, targetTrip);
-        }
+        await addTrip(db, tripName, destination, dateFormat(startDate),  
+        dateFormat(endDate), lodgingType, lodgingName, address);
 
         console.log('done');
-        navigation.navigate('TripPage', { currentTrip: targetTrip })
+        navigation.navigate('Landing');
     }
 
     return (
@@ -175,8 +138,8 @@ export default function EditTripPage() {
                 onChangeText={newAdd => setAddress(newAdd)}
             />
 
-            <TouchableOpacity onPress={() => updateDB()} >
-                <Text>Update Trip</Text>
+            <TouchableOpacity onPress={() => addToDB()} >
+                <Text>Save Trip</Text>
             </TouchableOpacity>
 
         </View>

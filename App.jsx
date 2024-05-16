@@ -8,7 +8,9 @@ import { loadDB } from './database/dbAccess';
 
 import LandingScreen from './pages/LandingPage';
 import TripPage from './pages/TripPage';
+import NewTripPage from './pages/NewTripPage';
 import EditTripPage from './pages/EditTripPage';
+//import BudgetListPage from './pages/BudgetListPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,7 +36,9 @@ export default function App() {
       >
         <Stack.Screen name = "Landing" component ={LandingScreen} options = {{title: 'Welcome!'}}  />
         <Stack.Screen name = "TripPage" component ={TripPage} options = {{title: 'Trip Page'}}/>
+        <Stack.Screen name = "NewTripPage" component ={NewTripPage} options = {{title: 'New Trip'}}/>
         <Stack.Screen name = "EditTripPage" component ={EditTripPage} options = {{title: 'Edit Trip'}}/>
+        {/* <Stack.Screen name = "BudgetListPage" component ={BudgetListPage} options = {{title: 'Saved Budgets'}}/> */}
       </Stack.Navigator>
       </SQLiteProvider>
     </NavigationContainer>

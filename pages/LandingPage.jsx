@@ -34,6 +34,10 @@ export default function LandingPage() {
     navigation.navigate('TripPage', { currentTrip: item });
   }
 
+  const newButton = () => {
+    navigation.navigate('NewTripPage');
+}
+
   if (!tripsLoaded) {
     return < Text> Loading... </Text>
 
@@ -41,6 +45,8 @@ export default function LandingPage() {
   else {
     console.log(trips);
     return (
+    <View>
+
       <AlphabetList
         data={trips}
         renderCustomItem={(item) => (
@@ -63,6 +69,12 @@ export default function LandingPage() {
       //   </View>
       // )}
       />
+
+        <TouchableOpacity onPress={() => newButton()} >
+          <Text>New Trip</Text>
+        </TouchableOpacity>
+
+      </View>
     );
   }
 }
