@@ -42,6 +42,7 @@ export async function editTrip(db, field, data, currentTrip) {
     console.error('Error updating trip:', error);
   }
 }
+
 export async function addTrip(db, name, destination, start, end, lodgingType, lodgingName, address) {
   console.log(
     "Processing: ", 
@@ -52,7 +53,7 @@ export async function addTrip(db, name, destination, start, end, lodgingType, lo
     lodgingType, ",", 
     lodgingName, ",", 
     address);
-    
+
   try {
     await db.runAsync(
       `INSERT INTO trips (tripName, destination, startDate, endDate, lodgingType, lodgingName, address) 
@@ -60,6 +61,17 @@ export async function addTrip(db, name, destination, start, end, lodgingType, lo
       [name, destination, start, end, lodgingType, lodgingName, address]);
   } catch (error) {
     console.error('Error adding trip:', error);
+  }
+}
+
+export async function deleteTrip(db, currentTrip) {
+  try {
+    console.log("Deleting: ", currentTrip);
+    await db.runAsync(`DELETE FROM trips WHERE tripName = ?;`, [currentTrip]);
+    console.log("Deletion Complete");
+
+  } catch (error) {
+    console.error('Error deleting trip:', error);
   }
 }
 

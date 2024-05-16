@@ -2,3 +2,7 @@ Production Notes:
 - Database file is copied into system files
 - Database locked may occur, reason unknown. When it happens, wipe emulator data.
 - Wiping Emulator Data is also needed when database structure is changed
+
+Pending Modifications:
+- Add Null Checks to new trip
+- Add Prompt Window to Delete

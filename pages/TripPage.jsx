@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, BackHandler } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import { getItinerary } from '../database/dbAccess';
+import { getItinerary, deleteTrip } from '../database/dbAccess';
 
 export default function TripPage() {
 
@@ -37,6 +37,13 @@ export default function TripPage() {
     const editButton = (item) => {
         loadTrip(false);
         navigation.navigate('EditTripPage', { currentTrip: item });
+    }
+
+    async function deleteButton(){// Add Prompt
+        loadTrip(false);
+        await deleteTrip(db, currentTrip);
+        navigation.navigate('Landing');
+
     }
 
     if (!tripLoaded) {
@@ -83,6 +90,10 @@ export default function TripPage() {
 
             <TouchableOpacity onPress={() => editButton(currentTrip)} >
                 <Text>Edit Trip Details</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => deleteButton()} >
+                <Text>Delete Trip</Text>
             </TouchableOpacity>
 
         </View>
