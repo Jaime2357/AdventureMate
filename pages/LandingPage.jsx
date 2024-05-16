@@ -23,7 +23,7 @@ export default function LandingPage() {
     db.withTransactionAsync(async () => {
       var tripResult = await getDestinations(db);
       const formattedTrips = tripResult.map(item => ({ value: item.tripName }));
-      setTrips(formattedTrips);
+      setTrips(formattedTrips)
       loadTrips(true);
     })
   }, [db]);
@@ -33,9 +33,11 @@ export default function LandingPage() {
     navigation.navigate('TripPage', { currentTrip: item });
   }
 
-  if(!tripsLoaded){
+  if (!tripsLoaded) {
+    return < Text> Loading... </Text>
+
   }
-  else{
+  else {
     console.log(trips);
     return (
       <AlphabetList

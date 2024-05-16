@@ -27,7 +27,7 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <SQLiteProvider databaseName = "AdventureDataV21.db">
+      <SQLiteProvider databaseName = "AdventureDataV301.db">
       <Stack.Navigator 
       initialRouteName = "Landing"
       screenOptions={styles.header} 

@@ -14,13 +14,17 @@ export default function EditTripPage() {
     const db = useSQLiteContext();
     const currentTrip = route.params;
 
-    const [tripName, setTripName] = useState();
-    const [destination, setDestination] = useState();
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
-    const [lodgingType, setLodgingType] = useState();
-    const [lodgingName, setLodgingName] = useState();
-    const [address, setAddress] = useState();
+    const [tripName, setTripName] = useState(null);
+    const [destination, setDestination] = useState(null);
+    const [startDate, setStartDate] = useState(new Date());
+    const [startDateControl, setStartDateControl] = useState(new Date());
+    const [changeStart, setChangeStart] = useState(false);
+    const [endDate, setEndDate] = useState(new Date());
+    const [endDateControl, setEndDateControl] = useState(new Date());
+    const [changeEnd, setChangeEnd] = useState(false);
+    const [lodgingType, setLodgingType] = useState(null);
+    const [lodgingName, setLodgingName] = useState(null);
+    const [address, setAddress] = useState(null);
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
 
@@ -33,9 +37,11 @@ export default function EditTripPage() {
         setShow(false);
         if (start) {
             setStartDate(currentDate);
+            setChangeStart(true);
         }
         else {
             setEndDate(currentDate);
+            setChangeEnd(true);
         }
     };
 
@@ -53,38 +59,45 @@ export default function EditTripPage() {
     };
 
     async function updateDB() {
+
+        var targetTrip = currentTrip.currentTrip;
+
         if (tripName != null) {
             console.log(1);
-            await editTrip(db, "tripName", tripName, currentTrip);
-            currentTrip = tripName;
+            targetTrip = tripName;
+            await editTrip(db, "tripName", tripName, currentTrip.currentTrip);
         }
+
+        console.log("Original: ", currentTrip.currentTrip);
+        console.log("Trip to Update: ", targetTrip);
+
         if (destination != null) {
             console.log(2);
-            await editTrip(db, "destination", destination, currentTrip);
+            await editTrip(db, "destination", destination, targetTrip);
         }
-        if (startDate != null) {
+        if (setChangeStart == setStartDateControl) {
             console.log(3);
-            await editTrip(db, "startDate", startDate, currentTrip);
+            await editTrip(db, "startDate", startDate, targetTrip);
         }
-        if (endDate != null) {
+        if (setChangeEnd == setEndDateControl) {
             console.log(4);
-            await editTrip(db, "endDate", endDate, currentTrip);
+            await editTrip(db, "endDate", endDate, targetTrip);
         }
         if (lodgingType != null) {
             console.log(5);
-            await editTrip(db, "lodgingType", lodgingType, currentTrip);
+            await editTrip(db, "lodgingType", lodgingType, targetTrip);
         }
         if (lodgingName != null) {
             console.log(6);
-            await editTrip(db, "lodgingName", lodgingName, currentTrip);
+            await editTrip(db, "lodgingName", lodgingName, targetTrip);
         }
         if (address != null) {
             console.log(7);
-            await editTrip(db, "address", address, currentTrip);
+            await editTrip(db, "address", address, targetTrip);
         }
 
         console.log('done');
-        navigation.navigate('TripPage', { currentTrip: currentTrip })
+        navigation.navigate('TripPage', { currentTrip: targetTrip })
     }
 
     return (
@@ -156,7 +169,7 @@ export default function EditTripPage() {
             </Text>
             <TextInput
                 style={styles.value}
-                onChangeText={newAdd => setDestination(newAdd)}
+                onChangeText={newAdd => setAddress(newAdd)}
             />
 
             <TouchableOpacity onPress={() => updateDB()} >

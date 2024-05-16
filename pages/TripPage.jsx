@@ -17,14 +17,17 @@ export default function TripPage() {
     useEffect(() => {
         navigation.setOptions({ title: currentTrip });
         db.withTransactionAsync(async () => {
+            console.log("Accessing: ", currentTrip);
             result = await getItinerary(db, currentTrip);
-            setTripData(result)
+            console.log("Output: ", result);
+            setTripData(result);
             loadTrip(true);
             //const for = tripResult.map(item => ({ value: item.destination }));
         })
     }, [navigation, route, db]);
 
     const editButton = (item) => {
+        loadTrip(false);
         navigation.navigate('EditTripPage', { currentTrip: item });
     }
 
@@ -32,14 +35,14 @@ export default function TripPage() {
         return < Text> Loading... </Text>
     }
     else{
-        console.log("Itinerary Loaded:", tripData)
+        console.log("Itinerary Loaded:", currentTrip, " - ", tripData)
     }
 
     return (
         <View>
             <Text style={styles.label}>
                 Destination:
-                {tripData.destination === null ? (
+                {!(tripData.destination) ? (
                     <Text style={styles.value}> N/A </Text>)
                     : (
                         <Text style={styles.value}> {tripData.destination} </Text>
@@ -47,7 +50,7 @@ export default function TripPage() {
             </Text>
             <Text style={styles.label}>
                 Duration:
-                {tripData.startDate === null || tripData.endDate === null ? (
+                {!(tripData.startDate) || !(tripData.endDate) ? (
                     <Text style={styles.value}> N/A </Text>)
                     : (
                         <Text style={styles.value}> {new Date(tripData.startDate).toString()} - {new Date(tripData.endDate).toString()} </Text>
@@ -55,7 +58,7 @@ export default function TripPage() {
             </Text>
             <Text style={styles.label}>
                 {tripData.lodgingType}:
-                {tripData.lodgingName === null ? (
+                {!(tripData.lodgingName) ? (
                     <Text style={styles.value}> N/A </Text>)
                     : (
                         <Text style={styles.value}> {tripData.lodgingName} </Text>
@@ -63,7 +66,7 @@ export default function TripPage() {
             </Text>
             <Text style={styles.label}>
                 Address:
-                {tripData.address === null ? (
+                {!(tripData.address) ? (
                     <Text style={styles.value}> N/A </Text>)
                     : (
                         <Text style={styles.value}> {tripData.address} </Text>
