@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/config-plugins": "~7.8.0",
+    "@react-native-community/datetimepicker": "7.6.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.1.16",
     "@react-navigation/native-stack": "^6.9.25",
@@ -24,6 +25,7 @@
     "react-native": "0.73.6",
     "react-native-alphabetlistview": "^0.5.0",
     "react-native-gesture-handler": "~2.14.0",
+    "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-reanimated": "~3.6.2",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
@@ -31,8 +33,7 @@
     "react-native-sqlite-storage": "^6.0.1",
     "react-navigation": "^5.0.0",
     "sqlite3": "^5.1.7",
-    "typescript": "^5.3.0",
-    "@react-native-community/datetimepicker": "7.6.1"
+    "typescript": "^5.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

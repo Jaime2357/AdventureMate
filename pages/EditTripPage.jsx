@@ -3,7 +3,7 @@ import { useSQLiteContext } from "expo-sqlite/next";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { editTrip } from "../database/dbAccess";
 import { StyleSheet, Button, View, Text, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 
 export default function EditTripPage() {
@@ -17,11 +17,11 @@ export default function EditTripPage() {
     const [tripName, setTripName] = useState(null);
     const [destination, setDestination] = useState(null);
     const [startDate, setStartDate] = useState(new Date());
-    const [startDateControl, setStartDateControl] = useState(new Date());
-    const [changeStart, setChangeStart] = useState(false);
+    const [showStartPicker, setShowStartPicker] = useState(false);
+    const [startChange, setStartChange] = useState(false);
     const [endDate, setEndDate] = useState(new Date());
-    const [endDateControl, setEndDateControl] = useState(new Date());
-    const [changeEnd, setChangeEnd] = useState(false);
+    const [showEndPicker, setShowEndPicker] = useState(false);
+    const [endChange, setEndChange] = useState(false);
     const [lodgingType, setLodgingType] = useState(null);
     const [lodgingName, setLodgingName] = useState(null);
     const [address, setAddress] = useState(null);
@@ -32,31 +32,33 @@ export default function EditTripPage() {
         navigation.setOptions({ title: `Edit Details: ${currentTrip.currentTrip}` })
     })
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setShow(false);
-        if (start) {
-            setStartDate(currentDate);
-            setChangeStart(true);
-        }
-        else {
-            setEndDate(currentDate);
-            setChangeEnd(true);
-        }
+    const handleStartConfirm = (date) => {
+        setStartDate(date);
+        setShowStartPicker(false);
+        setStartChange(true);
     };
 
-    const showMode = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
+    const handleStartCancel = () => {
+        setShowStartPicker(false);
+    }
+
+    const handleEndConfirm = (date) => {
+        setEndDate(date);
+        setShowEndPicker(false);
+        setEndChange(true);
     };
 
-    const showDatepicker = () => {
-        showMode('date');
-    };
+    const handleEndCancel = () => {
+        setShowEndPicker(false);
+    }
 
-    const showTimepicker = () => {
-        showMode('time');
-    };
+    function dateFormat(date){
+        const isoString = date.toISOString();
+        const datePart = isoString.split('T')[0];
+        const timePart = isoString.split('T')[1].split('.')[0];
+        return `${datePart} ${timePart}`;
+
+    }
 
     async function updateDB() {
 
@@ -70,18 +72,21 @@ export default function EditTripPage() {
 
         console.log("Original: ", currentTrip.currentTrip);
         console.log("Trip to Update: ", targetTrip);
+        console.log("Start: ", startChange);
+        console.log("End: ", endChange);
+
 
         if (destination != null) {
             console.log(2);
             await editTrip(db, "destination", destination, targetTrip);
         }
-        if (setChangeStart == setStartDateControl) {
+        if (startChange) {
             console.log(3);
-            await editTrip(db, "startDate", startDate, targetTrip);
+            await editTrip(db, "startDate", dateFormat(startDate), targetTrip);
         }
-        if (setChangeEnd == setEndDateControl) {
+        if (endChange) {
             console.log(4);
-            await editTrip(db, "endDate", endDate, targetTrip);
+            await editTrip(db, "endDate", dateFormat(endDate), targetTrip);
         }
         if (lodgingType != null) {
             console.log(5);
@@ -119,33 +124,33 @@ export default function EditTripPage() {
             />
 
             <SafeAreaView>
-                <Button onPress={showDatepicker} title="Start Date" />
-                <Button onPress={showTimepicker} title="Start Time" />
-                {/* <Text style={styles.label}> Start Date and Time: {startDate.toLocaleString()}</Text> */}
-                {show && (
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        value={startDate}
-                        mode={mode}
-                        is24Hour={true}
-                        onChange={onChange}
-                    />
-                )}
+                <Button
+                title = "Select Start Date" 
+                onPress={setShowStartPicker}
+                />
+                <DateTimePickerModal
+                isVisible={showStartPicker}
+                mode="datetime"
+                date = {startDate}
+                onConfirm={handleStartConfirm}
+                onCancel={handleStartCancel}
+                />
+                <Text style={styles.label}> Start Date and Time: {startDate.toLocaleString()}</Text>
             </SafeAreaView>
 
             <SafeAreaView>
-                <Button onPress={showDatepicker} title="Start Date" />
-                <Button onPress={showTimepicker} title="Start Time" />
-                {/* <Text style={styles.label}> End Date and Time: {endDate.toLocaleString()}</Text> */}
-                {show && (
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        value={endDate}
-                        mode={mode}
-                        is24Hour={true}
-                        onChange={onChange}
-                    />
-                )}
+            <Button
+                title = "Select End Date" 
+                onPress={setShowEndPicker}
+                />
+                <DateTimePickerModal
+                isVisible={showEndPicker}
+                mode="datetime"
+                date = {endDate}
+                onConfirm={handleEndConfirm}
+                onCancel={handleEndCancel}
+                />
+                <Text style={styles.label}> End Date and Time: {endDate.toLocaleString()}</Text>
             </SafeAreaView>
 
             <Text style={styles.label}>
