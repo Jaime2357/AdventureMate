@@ -30,6 +30,8 @@ export async function getItinerary(db, currentTrip) {
   const statement = await db.prepareAsync("SELECT * FROM trips WHERE tripName = ?;");
   const result = await statement.executeAsync([currentTrip]);
   const firstRow = await result.getFirstAsync();
+  await statement.finalizeAsync();
+
   return firstRow;
 }
 
@@ -73,5 +75,24 @@ export async function deleteTrip(db, currentTrip) {
   } catch (error) {
     console.error('Error deleting trip:', error);
   }
+}
+
+export async function getBudgets(db, currentTrip) {
+
+  try{
+    const statement = await db.prepareAsync(`SELECT budgetName FROM budgets WHERE tripName = ?;`);
+    const result = await statement.executeAsync([currentTrip.currentTrip]);
+    const output = await result.getAllAsync();
+    await statement.finalizeAsync();
+
+    console.log("Budgets Found: ", output);
+    return output;
+
+  } catch (error) {
+    console.error(`Error getting budgets: `, error);
+  }
+  
+
+  // const result = await db.runAsync(`SELECT budgetName FROM budgets WHERE tripName = ${currentTrip};`);
 }
 

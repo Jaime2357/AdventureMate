@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import {SQLiteProvider} from 'expo-sqlite/next';
+import { SQLiteProvider } from 'expo-sqlite/next';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { loadDB } from './database/dbAccess';
+import { NativeBaseProvider} from "native-base";
+import {LinearGradient} from 'expo-linear-gradient';
+
+
 
 import LandingScreen from './pages/LandingPage';
 import TripPage from './pages/TripPage';
 import NewTripPage from './pages/NewTripPage';
 import EditTripPage from './pages/EditTripPage';
-//import BudgetListPage from './pages/BudgetListPage';
+import BudgetListPage from './pages/BudgetListPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,30 +24,38 @@ export default function App() {
 
   useEffect(() => {
     loadDB()
-    .then(() => setDBbLoaded(true))
-    .catch((e) => console.error(e) );
+      .then(() => setDBbLoaded(true))
+      .catch((e) => console.error(e));
   }, []);
 
-  if(!dbLoaded){
+  if (!dbLoaded) {
     return < Text> Loading... </Text>
   }
   return (
-    <NavigationContainer>
-      <SQLiteProvider databaseName = "AdventureDataV301.db">
-      <Stack.Navigator 
-      initialRouteName = "Landing"
-      screenOptions={styles.header} 
-      >
-        <Stack.Screen name = "Landing" component ={LandingScreen} options = {{title: 'Welcome!'}}  />
-        <Stack.Screen name = "TripPage" component ={TripPage} options = {{title: 'Trip Page'}}/>
-        <Stack.Screen name = "NewTripPage" component ={NewTripPage} options = {{title: 'New Trip'}}/>
-        <Stack.Screen name = "EditTripPage" component ={EditTripPage} options = {{title: 'Edit Trip'}}/>
-        {/* <Stack.Screen name = "BudgetListPage" component ={BudgetListPage} options = {{title: 'Saved Budgets'}}/> */}
-      </Stack.Navigator>
-      </SQLiteProvider>
-    </NavigationContainer>
+    <NativeBaseProvider config={config}>
+      <NavigationContainer>
+        <SQLiteProvider databaseName="AdventureDataV301.db">
+          <Stack.Navigator
+            initialRouteName="Landing"
+            screenOptions={styles.header}
+          >
+            <Stack.Screen name="Landing" component={LandingScreen} options={{ title: 'Welcome!' }} />
+            <Stack.Screen name="TripPage" component={TripPage} options={{ title: 'Trip Page' }} />
+            <Stack.Screen name="NewTripPage" component={NewTripPage} options={{ title: 'New Trip' }} />
+            <Stack.Screen name="EditTripPage" component={EditTripPage} options={{ title: 'Edit Trip' }} />
+            <Stack.Screen name="BudgetListPage" component={BudgetListPage} options={{ title: 'Saved Budgets' }} />
+          </Stack.Navigator>
+        </SQLiteProvider>
+      </NavigationContainer>
+    </NativeBaseProvider>
   );
 }
+
+const config = {
+  dependencies: {
+    'linear-gradient': LinearGradient
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -52,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  header:{ 
+  header: {
     headerStyle: {
       backgroundColor: '#588CD1'
     }

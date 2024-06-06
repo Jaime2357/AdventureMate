@@ -7,6 +7,7 @@ import { loadDB, getDestinations } from '../database/dbAccess';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { isSearchBarAvailableForCurrentPlatform } from 'react-native-screens';
+import { Box } from "native-base";
 
 //const Stack = createNativeStackNavigator();
 
@@ -36,7 +37,7 @@ export default function LandingPage() {
 
   const newButton = () => {
     navigation.navigate('NewTripPage');
-}
+  }
 
   if (!tripsLoaded) {
     return < Text> Loading... </Text>
@@ -45,34 +46,35 @@ export default function LandingPage() {
   else {
     console.log(trips);
     return (
-    <View>
+      <View>
 
-      <AlphabetList
-        data={trips}
-        renderCustomItem={(item) => (
-          <TouchableOpacity onPress={() => handleClick(item.value)} >
-            <Text>
-              {item.value}
-            </Text>
+        <AlphabetList
+          data={trips}
+          renderCustomItem={(item) => (
+            <TouchableOpacity onPress={() => handleClick(item.value)} >
+              <Text>
+                {item.value}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+
+        <Box
+          bg={{
+            linearGradient: {
+              colors: ['lightBlue.300', 'violet.800'],
+              start: [0, 0],
+              end: [1, 0],
+            },
+          }}
+          p="12"
+          rounded="lg"
+          _text={{ fontSize: 'md', fontWeight: 'bold', color: 'black' }}
+        >
+          <TouchableOpacity onPress={() => newButton()} >
+            <Text>New Trip</Text>
           </TouchableOpacity>
-        )}
-      //style = {styles.alphaList}
-      // indexLetterStyle={{
-      //   color: 'blue',
-      //   fontSize: 50,
-      //   backgroundColor: '#f5f5f5', // Light gray background
-      //   padding: 5, // Add padding for better spacing
-      // }}
-      // renderCustomItem={(item) => (
-      //   <View style={styles.listItemContainer}>
-      //     <Text style={styles.listItemLabel}>{item.value}</Text>
-      //   </View>
-      // )}
-      />
-
-        <TouchableOpacity onPress={() => newButton()} >
-          <Text>New Trip</Text>
-        </TouchableOpacity>
+        </Box>
 
       </View>
     );

@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, TouchableOpacity, BackHandler } from 'react-nat
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { getItinerary, deleteTrip } from '../database/dbAccess';
+import { Box } from "native-base";
+
 
 export default function TripPage() {
 
@@ -37,6 +39,11 @@ export default function TripPage() {
     const editButton = (item) => {
         loadTrip(false);
         navigation.navigate('EditTripPage', { currentTrip: item });
+    }
+
+    const budgetsButton = (item) => {
+        loadTrip(false);
+        navigation.navigate('BudgetListPage', { currentTrip: item });
     }
 
     async function deleteButton(){// Add Prompt
@@ -90,6 +97,10 @@ export default function TripPage() {
 
             <TouchableOpacity onPress={() => editButton(currentTrip)} >
                 <Text>Edit Trip Details</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => budgetsButton(currentTrip)} >
+                <Text>Budgets</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => deleteButton()} >
